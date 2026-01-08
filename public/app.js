@@ -1,6 +1,6 @@
 /**
  * Antigravity Console - Main Entry
- * 
+ *
  * This file orchestrates Alpine.js initialization.
  * Components are loaded via separate script files that register themselves
  * to window.Components before this script runs.
@@ -26,12 +26,14 @@ document.addEventListener('alpine:init', () => {
             return;
         }
 
-        fetch(`views/${viewName}.html`)
+        fetch(`views/${viewName}.html?t=${Date.now()}`)
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return response.text();
             })
             .then(html => {
+                // Update cache (optional, or remove if we want always-fresh)
+                // keeping cache for session performance, but initial load will now bypass browser cache
                 window.viewCache.set(viewName, html);
                 el.innerHTML = html;
                 Alpine.initTree(el);

@@ -1,14 +1,15 @@
 <div x-data="accountManager" class="view-container">
-    <div class="section-header">
+    <!-- Header -->
+    <div class="flex items-start justify-between mb-6">
         <div>
-            <h2 class="section-title" x-text="$store.global.t('accessCredentials')">
+            <h2 class="text-2xl font-bold text-white tracking-tight mb-1" x-text="$store.global.t('accessCredentials')">
                 Access Credentials
             </h2>
-            <p class="section-desc" x-text="$store.global.t('manageTokens')">
+            <p class="text-sm text-gray-500" x-text="$store.global.t('manageTokens')">
                 Manage OAuth tokens and session states
             </p>
         </div>
-        <button class="btn btn-primary btn-sm gap-2"
+        <button class="btn bg-neon-purple hover:bg-purple-600 border-none text-white btn-sm gap-2 shadow-lg shadow-neon-purple/20"
             onclick="document.getElementById('add_account_modal').showModal()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -17,43 +18,62 @@
         </button>
     </div>
 
-    <div class="glass-panel rounded-xl overflow-hidden">
-        <table class="standard-table">
+    <!-- Table Container -->
+    <div class="bg-space-900/40 border border-space-border/30 rounded-xl overflow-hidden backdrop-blur-sm">
+        <table class="w-full">
             <thead>
-                <tr>
-                    <th class="pl-6 w-24" x-text="$store.global.t('enabled')">Enabled</th>
-                    <th x-text="$store.global.t('identity')">Identity (Email)</th>
-                    <th x-text="$store.global.t('projectId')">Project ID</th>
-                    <th class="w-32" x-text="$store.global.t('health')">Health</th>
-                    <th class="text-right pr-6" x-text="$store.global.t('operations')">Operations</th>
+                <tr class="border-b border-space-border/50">
+                    <th class="pl-6 py-3 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wider w-20" x-text="$store.global.t('enabled')">Enabled</th>
+                    <th class="py-3 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wider" x-text="$store.global.t('identity')">Identity (Email)</th>
+                    <th class="py-3 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wider w-32" x-text="$store.global.t('projectId')">Project ID</th>
+                    <th class="py-3 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wider w-24" x-text="$store.global.t('health')">Health</th>
+                    <th class="py-3 pr-6 text-right text-[10px] font-bold text-gray-500 uppercase tracking-wider w-32" x-text="$store.global.t('operations')">Operations</th>
                 </tr>
             </thead>
             <tbody>
                 <template x-for="acc in $store.data.accounts" :key="acc.email">
-                    <tr>
-                        <td class="pl-6">
-                            <input type="checkbox"
-                                class="toggle toggle-success toggle-sm"
-                                :checked="acc.enabled !== false"
-                                @change="toggleAccount(acc.email, $el.checked)">
+                    <tr class="border-b border-space-border/30 last:border-0 hover:bg-white/5 transition-colors group">
+                        <td class="pl-6 py-4">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer"
+                                    :checked="acc.enabled !== false"
+                                    @change="toggleAccount(acc.email, $el.checked)">
+                                <div class="w-9 h-5 bg-space-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-gray-600 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-neon-green peer-checked:after:bg-white"></div>
+                            </label>
                         </td>
-                        <td class="font-medium text-gray-200" x-text="acc.email"></td>
-                        <td class="font-mono text-xs text-gray-400" x-text="acc.projectId || '-'"></td>
-                        <td>
-                            <span class="badge badge-sm border-0 font-mono"
-                                :class="acc.status === 'ok' ? 'bg-neon-green/10 text-neon-green' : 'bg-red-500/10 text-red-500'"
-                                x-text="acc.status.toUpperCase()"></span>
+                        <td class="py-4">
+                            <div class="tooltip tooltip-right" :data-tip="acc.email">
+                                <span class="font-mono text-sm text-gray-300 truncate max-w-[320px] inline-block cursor-help group-hover:text-white transition-colors"
+                                      x-text="acc.email.length > 40 ?
+                                              acc.email.substring(0, 15) + '...' + acc.email.slice(-18) :
+                                              acc.email">
+                                </span>
+                            </div>
                         </td>
-                        <td class="text-right pr-6">
-                            <div class="flex justify-end gap-1">
+                        <td class="py-4 font-mono text-xs text-gray-500" x-text="acc.projectId || '-'"></td>
+                        <td class="py-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full flex-shrink-0"
+                                     :class="acc.status === 'ok' ?
+                                             'bg-neon-green shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse' :
+                                             'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'">
+                                </div>
+                                <span class="text-xs font-mono font-semibold"
+                                      :class="acc.status === 'ok' ? 'text-neon-green' : 'text-red-400'"
+                                      x-text="acc.status.toUpperCase()">
+                                </span>
+                            </div>
+                        </td>
+                        <td class="py-4 pr-6">
+                            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <!-- Fix Button -->
                                 <button x-show="acc.status === 'invalid'"
-                                    class="btn btn-xs bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 border-none mr-1 px-2 font-mono"
+                                    class="px-3 py-1 text-[10px] font-bold font-mono uppercase tracking-wider rounded bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 border border-yellow-500/30 hover:border-yellow-500/50 transition-all"
                                     @click="fixAccount(acc.email)"
                                     x-text="$store.global.t('fix')">
                                     FIX
                                 </button>
-                                <button class="btn btn-xs btn-square btn-ghost text-gray-400 hover:text-white"
+                                <button class="p-2 rounded hover:bg-white/10 text-gray-500 hover:text-white transition-colors"
                                     @click="refreshAccount(acc.email)" :title="$store.global.t('refreshData')">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -61,7 +81,7 @@
                                     </svg>
                                 </button>
                                 <button
-                                    class="btn btn-xs btn-square btn-ghost text-red-400 hover:text-red-500 hover:bg-red-500/10"
+                                    class="p-2 rounded hover:bg-red-500/10 text-gray-500 hover:text-red-400 transition-colors"
                                     @click="deleteAccount(acc.email)" :title="$store.global.t('delete')">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
