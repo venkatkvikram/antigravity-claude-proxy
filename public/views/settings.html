@@ -1072,7 +1072,7 @@
                                 <!-- Strategy dropdown (editing) -->
                                 <div class="mb-2" x-show="editingPresetConfig">
                                     <label class="text-[10px] uppercase tracking-wider text-gray-600 font-semibold">Strategy</label>
-                                    <select class="select select-sm bg-space-800 border-space-border text-white font-mono text-[11px] w-full mt-0.5"
+                                    <select class="select select-sm bg-space-800 border-space-border text-white text-xs w-full mt-0.5"
                                         x-model="editingConfigDraft.accountSelection.strategy">
                                         <option value="sticky" x-text="$store.global.t('strategyStickyLabel') || 'Sticky'"></option>
                                         <option value="round-robin" x-text="$store.global.t('strategyRoundRobinLabel') || 'Round Robin'"></option>
