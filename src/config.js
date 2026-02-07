@@ -45,6 +45,8 @@ const DEFAULT_CONFIG = {
     maxConsecutiveFailures: 3,     // Before applying extended cooldown
     extendedCooldownMs: 60000,     // 1 minute extended cooldown
     maxCapacityRetries: 5,         // Max retries for capacity exhaustion
+    switchAccountDelayMs: 5000,    // Delay before switching accounts on rate limit
+    capacityBackoffTiersMs: [5000, 10000, 20000, 30000, 60000], // Progressive backoff tiers for capacity exhaustion
     modelMapping: {},
     // Account selection strategy configuration
     accountSelection: {
@@ -55,7 +57,7 @@ const DEFAULT_CONFIG = {
             successReward: 1,         // Points on successful request
             rateLimitPenalty: -10,    // Points on rate limit
             failurePenalty: -20,      // Points on other failures
-            recoveryPerHour: 2,       // Passive recovery rate
+            recoveryPerHour: 10,      // Passive recovery rate (matches health-tracker.js)
             minUsable: 50,            // Minimum score to be selected
             maxScore: 100             // Maximum score cap
         },
@@ -68,6 +70,12 @@ const DEFAULT_CONFIG = {
             lowThreshold: 0.10,       // 10% - reduce score
             criticalThreshold: 0.05,  // 5% - exclude from candidates
             staleMs: 300000           // 5 min - max age of quota data to trust
+        },
+        weights: {
+            health: 2,                // Weight for health score component
+            tokens: 5,                // Weight for token bucket component
+            quota: 3,                 // Weight for quota awareness component
+            lru: 0.1                  // Weight for LRU freshness component
         }
     }
 };
