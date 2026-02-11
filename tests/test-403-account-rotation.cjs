@@ -432,6 +432,7 @@ async function runTests() {
         process.exit(1);
     } else {
         console.log('✅ All tests passed!');
+        process.exit(0);
     }
 }
 
